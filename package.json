@@ -1,0 +1,24 @@
+{
+  "name": "parseable-winston",
+  "version": "0.0.1",
+  "keywords": [
+    "parseable",
+    "log",
+    "logs",
+    "logging",
+    "winston",
+    "transport"
+  ],
+  "files": [
+    "index.js",
+    "lib/Buffer.js",
+    "lib/Client.js"
+  ],
+  "devDependencies": {
+    "winston": "^3.3.3"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "winston-transport": "^4.4.0"
+  }
+}
