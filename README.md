@@ -34,7 +34,7 @@ const logger = winston.createLogger({
 })
 
 logger.info('User took the goggles', { userid: 1, user: { name: 'Rainier Wolfcastle' } })
-logger.warn('The goggles do nothing', { userid: 1 })
+logger.warning('The goggles do nothing', { userid: 1 })
 ```
 
 Tuning the default buffering options:
