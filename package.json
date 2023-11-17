@@ -15,10 +15,10 @@
     "lib/Client.js"
   ],
   "devDependencies": {
-    "winston": "^3.3.3"
+    "winston": "^3.11.0"
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "winston-transport": "^4.4.0"
+    "winston-transport": "^4.6.0"
   }
 }
