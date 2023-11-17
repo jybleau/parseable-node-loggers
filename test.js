@@ -1,24 +1,23 @@
 const ParseableTransport = require('./')
 const winston = require('winston')
 
-const apex = new ParseableTransport({
-  url: process.env.APEX_LOGS_URL,
-  authToken: process.env.APEX_LOGS_AUTH_TOKEN,
-  projectId: process.env.APEX_LOGS_PROJECT_ID,
+const parseable = new ParseableTransport({
+  url: process.env.PARSEABLE_LOGS_URL,
+  username: process.env.PARSEABLE_LOGS_USERNAME,
+  authToken: process.env.PARSEABLE_LOGS_PASSWORD,
+  logstream: process.env.PARSEABLE_LOGS_LOGSTREAM,
   buffer: { maxEntries: 200 }
 })
 
 const logger = winston.createLogger({
   levels: winston.config.syslog.levels,
-  transports: [apex],
-  defaultMeta: { program: 'api', host: 'api-01' }
+  transports: [parseable],
+  defaultMeta: { program: 'ap', host: 'app1' }
 })
 
-logger.info('User Login', { user: { id: 'tobi', name: 'Tobi Ferret' } })
-logger.warning('Access denied')
-logger.crit('Something exploded', { error: new Error('boom') })
 
-// setInterval(_ => {
-//   logger.info('Hello World from Winston')
-// }, 250)
+logger.info('User took the goggles', { userid: 1, user: { name: 'Rainier Wolfcastle' } })
+logger.warning('The goggles do nothing', { userid: 1 })
+logger.crit('Something crashed', { error: new Error('boom') })
+
 logger.end()
