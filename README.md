@@ -30,7 +30,7 @@ const parseable = new ParseableTransport({
 const logger = winston.createLogger({
   levels: winston.config.syslog.levels,
   transports: [parseable],
-  defaultMeta: { program: 'app', host: 'app1' }
+  defaultMeta: { instance: 'app', hostname: 'app1' }
 })
 
 logger.info('User took the goggles', { userid: 1, user: { name: 'Rainier Wolfcastle' } })

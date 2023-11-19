@@ -12,12 +12,12 @@ const parseable = new ParseableTransport({
 const logger = winston.createLogger({
   levels: winston.config.syslog.levels,
   transports: [parseable],
-  defaultMeta: { program: 'ap', host: 'app1' }
+  defaultMeta: { instance: 'app', hostname: 'app1' }
 })
 
 
 logger.info('User took the goggles', { userid: 1, user: { name: 'Rainier Wolfcastle' } })
 logger.warning('The goggles do nothing', { userid: 1 })
-logger.crit('Something crashed', { error: new Error('boom') })
+logger.error('Something crashed', { error: new Error('boom') })
 
 logger.end()

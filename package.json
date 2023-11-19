@@ -1,6 +1,15 @@
 {
   "name": "parseable-winston",
   "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/jybleau/parseable-winston.git"
+  },
+  "author": {
+    "name": "Jacques-Yves Bleau",
+    "email": "jybleau@panache.media",
+    "url": "https://panache.media"
+  },
   "keywords": [
     "parseable",
     "log",

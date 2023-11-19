@@ -90,7 +90,7 @@ exports = module.exports = class ParseableTransport extends Transport {
    */
 
   async onFlush(events) {
-    await this.client.addEvents(events)
+    await this.client.sendEvents(events)
   }
 
   /**
