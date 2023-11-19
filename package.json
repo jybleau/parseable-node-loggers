@@ -3,7 +3,7 @@
   "version": "0.0.3",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/jybleau/parseable-winston.git"
+    "url": "https://github.com/jybleau/parseable-winston"
   },
   "author": {
     "name": "Jacques-Yves Bleau",
