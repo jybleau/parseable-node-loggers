@@ -2,7 +2,12 @@
 
 # Parseable-Winston
 
-[Parseable](https://www.parseable.io/) transport for the popular [Winston](https://github.com/winstonjs/winston) Node.js logging framework.
+Parseable transport plugin for the popular Winston logging framework.
+
+## Dependencies
+
+* [Parseable](https://www.parseable.io/)
+* [Winston](https://github.com/winstonjs/winston)
 
 ## Installation
 
