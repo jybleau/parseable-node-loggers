@@ -31,7 +31,8 @@ const parseable = new ParseableTransport({
   url: process.env.PARSEABLE_LOGS_URL,
   username: process.env.PARSEABLE_LOGS_USERNAME,
   password: process.env.PARSEABLE_LOGS_PASSWORD,
-  logstream: process.env.PARSEABLE_LOGS_LOGSTREAM
+  logstream: process.env.PARSEABLE_LOGS_LOGSTREAM,
+  tags: { tag1: 'tagValue' } // optional tags to be added to all log event
 })
 
 const logger = winston.createLogger({
@@ -42,6 +43,7 @@ const logger = winston.createLogger({
 
 logger.info('User took the goggles', { userid: 1, user: { name: 'Rainier Wolfcastle' } })
 logger.warning('The goggles do nothing', { userid: 1 })
+
 ```
 
 Tuning the default buffering options:
@@ -58,7 +60,7 @@ const parseable = new ParseableTransport({
 
 ## Notes
 
-Based on the TJ's work: Apex-Logs-Winston
+*Inspired from TJ's Apex-Logs-Winston*
 
 ## LICENCE
 

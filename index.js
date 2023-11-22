@@ -27,18 +27,19 @@ exports = module.exports = class ParseableTransport extends Transport {
   /**
    * Initialize with the given config:
    * 
-   * - `url`: Apex Logs instance endpoint
+   * - `url`: Parseable instance endpoint
    * - `username`: API auth username
    * - `password`: API auth password
    * - `logstream`: log stream name
    * - `buffer`: Options for buffering
    *   - `maxEntries`: The maximum number of entries before flushing (defaults to 250)
    *   - `flushInterval`: The flush interval in milliseconds (defaults to 5,000)
+   * - `tags`: Optional key:value tag object, applied as http header to all log events
    */
 
-  constructor({ url, username, password, logstream, buffer = {}, ...options }) {
+  constructor({ url, username, password, logstream, buffer = {}, tags = {}, ...options }) {
     super(options)
-    this.client = new Client({ url, logstream, username, password })
+    this.client = new Client({ url, logstream, username, password, tags })
     this.buffer = new Buffer({
       onFlush: this.onFlush.bind(this),
       onError: this.onError.bind(this),
