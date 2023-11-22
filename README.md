@@ -32,7 +32,7 @@ const parseable = new ParseableTransport({
   username: process.env.PARSEABLE_LOGS_USERNAME,
   password: process.env.PARSEABLE_LOGS_PASSWORD,
   logstream: process.env.PARSEABLE_LOGS_LOGSTREAM,
-  tags: { tag1: 'tagValue' } // optional tags to be added to all log event
+  tags: { tag1: 'tagValue' } // optional tags to be added with each ingestion
 })
 
 const logger = winston.createLogger({
