@@ -35,11 +35,13 @@ exports = module.exports = class ParseableTransport extends Transport {
    *   - `maxEntries`: The maximum number of entries before flushing (defaults to 250)
    *   - `flushInterval`: The flush interval in milliseconds (defaults to 5,000)
    * - `tags`: Optional key:value tag object, applied as http header to all log events
+   * - `disableTLSCerts`: Optional Boolean, default to false. Set to true to ignore invalid certificate
+   * - `http2`: Optional Boolean. Default to true. Use http2 protocol
    */
 
-  constructor({ url, username, password, logstream, buffer = {}, tags = {}, ...options }) {
+  constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, ...options }) {
     super(options)
-    this.client = new Client({ url, logstream, username, password, tags })
+    this.client = new Client({ url, logstream, username, password, tags, disableTLSCerts, http2 })
     this.buffer = new Buffer({
       onFlush: this.onFlush.bind(this),
       onError: this.onError.bind(this),

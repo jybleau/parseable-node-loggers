@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "superagent": "^8.1.2",
     "winston-transport": "^4.6.0"
   }
 }

@@ -46,7 +46,7 @@ logger.warning('The goggles do nothing', { userid: 1 })
 
 ```
 
-Tuning the default buffering options:
+### Tuning the default buffering options
 
 ```js
 const parseable = new ParseableTransport({
@@ -57,6 +57,11 @@ const parseable = new ParseableTransport({
   buffer: { maxEntries: 100, flushInterval: 5000 }
 })
 ```
+
+### Other optional parameters
+
+* `disableTLSCerts`: Default to false. Set to true to ignore invalid certificate
+* `http2`: Default to true. Set to false to use HTTP/1.1 instead of HTTP/2.0
 
 ## Notes
 
