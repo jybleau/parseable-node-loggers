@@ -24,9 +24,8 @@
     "transport"
   ],
   "files": [
-    "index.js",
-    "lib/Buffer.js",
-    "lib/Client.js"
+    "dist/**/*",
+    "tsconfig.json"
   ],
   "devDependencies": {
     "winston": "^3.11.0"
