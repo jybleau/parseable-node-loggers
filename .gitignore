@@ -1,3 +1,9 @@
 .envrc
 node_modules
 .npmrc
+dist/
+.DS_Store
+*.code-workspace
+*.lockb
+*.sublime-project
+*.sublime-workspace
