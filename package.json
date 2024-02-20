@@ -1,6 +1,8 @@
 {
   "name": "parseable-winston",
   "version": "0.1.1",
+  "license": "MIT",
+  "main": "dist/index",
   "repository": {
     "type": "git",
     "url": "https://github.com/jybleau/parseable-winston"
@@ -30,5 +32,9 @@
     "debug": "^4.1.1",
     "superagent": "^8.1.2",
     "winston-transport": "^4.6.0"
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "yarn": "^1.22.19"
   }
 }
