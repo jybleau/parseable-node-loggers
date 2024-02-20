@@ -1,4 +1,4 @@
-const ParseableTransport = require('./')
+const ParseableTransport = require('../src')
 const winston = require('winston')
 
 const parseable = new ParseableTransport({
