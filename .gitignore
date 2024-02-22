@@ -7,3 +7,4 @@ dist/
 *.lockb
 *.sublime-project
 *.sublime-workspace
+yarn-error.log

@@ -28,6 +28,8 @@
     "tsconfig.json"
   ],
   "devDependencies": {
+    "@types/node": "^20.11.20",
+    "@types/winston": "^2.4.4",
     "winston": "^3.11.0"
   },
   "dependencies": {
