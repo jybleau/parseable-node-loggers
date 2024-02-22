@@ -24,14 +24,14 @@ yarn add parseable-winston
 Logs are buffered in memory and flushed periodically for more efficient ingestion. By default a `maxEntries` of 250, and `flushInterval` of 5 seconds are used.
 
 ```js
-const ParseableTransport = require('parseable-winston')
+const { ParseableTransport } = require('parseable-winston')
 const winston = require('winston')
 
 const parseable = new ParseableTransport({
-  url: process.env.PARSEABLE_LOGS_URL,
+  url: process.env.PARSEABLE_LOGS_URL, // Ex: 'https://parsable.myserver.local/api/v1/logstream'
   username: process.env.PARSEABLE_LOGS_USERNAME,
   password: process.env.PARSEABLE_LOGS_PASSWORD,
-  logstream: process.env.PARSEABLE_LOGS_LOGSTREAM,
+  logstream: process.env.PARSEABLE_LOGS_LOGSTREAM, // The logstream name
   tags: { tag1: 'tagValue' } // optional tags to be added with each ingestion
 })
 

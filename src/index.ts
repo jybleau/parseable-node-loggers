@@ -1,8 +1,8 @@
 
 const debug = require('debug')('parseable-winston')
 const Transport = require('winston-transport')
-const { Client } = require('./lib/Client')
-const Buffer = require('./lib/Buffer')
+const { ParseableClient } = require('./lib/ParseableClient')
+const { BufferIngester } = require('./lib/BufferIngester')
 
 // levels is a map of valid Winston to Parseable Logs levels.
 const levels = {
@@ -22,7 +22,7 @@ const levels = {
  * ParseableTransport is the Parseable log transport.
  */
 
-exports = module.exports = class ParseableTransport extends Transport {
+export class ParseableTransport extends Transport {
 
   /**
    * Initialize with the given config:
@@ -41,8 +41,8 @@ exports = module.exports = class ParseableTransport extends Transport {
 
   constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, ...options }) {
     super(options)
-    this.client = new Client({ url, logstream, username, password, tags, disableTLSCerts, http2 })
-    this.buffer = new Buffer({
+    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2 })
+    this.buffer = new BufferIngester({
       onFlush: this.onFlush.bind(this),
       onError: this.onError.bind(this),
       ...buffer
@@ -82,17 +82,17 @@ exports = module.exports = class ParseableTransport extends Transport {
    * End handler, close the buffer.
    */
 
-  async end(args) {
+  async end(args: any): Promise<this> {
     debug('closing')
     await this.buffer.close()
-    super.end(args)
+    return super.end(args)
   }
 
   /**
    * Handle flushing.
    */
 
-  async onFlush(events) {
+  async onFlush(events: any[]) {
     await this.client.sendEvents(events)
   }
 
@@ -100,7 +100,7 @@ exports = module.exports = class ParseableTransport extends Transport {
    * Handle errors.
    */
 
-  async onError(error) {
+  async onError(error: Error) {
     // TODO: maybe delegate here
     console.error('parseable-winston: error flushing logs: %s', error)
   }

@@ -1,6 +1,6 @@
 
 const debug = require('debug')('parseable-winston')
-const { setTimeout } = require('timers/promises')
+const { setTimeoutPromise } = require('timers/promises')
 
 // error codes for which we can retry
 const errorCodesToRetry = ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE']
@@ -9,7 +9,14 @@ const errorCodesToRetry = ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRE
  * Buffer is used to batch events for efficient ingestion.
  */
 
-module.exports = class Buffer {
+export class BufferIngester {
+  values: any[]
+  maxEntries: number
+  maxRetries: number
+  private _id: NodeJS.Timeout
+  onFlush: any
+  onError: any
+  
   constructor({ onFlush, onError, maxEntries = 250, maxRetries = 3, flushInterval = 5000 }) {
     this.values = []
     this.maxEntries = maxEntries
@@ -42,7 +49,7 @@ module.exports = class Buffer {
       } catch (error) {
         if (errorCodesToRetry.includes(error.code) && attempt < this.maxRetries) {
           // do retry
-          await setTimeout(250)
+          await setTimeoutPromise(250)
           await doFlushAttempt(attempt + 1)
         } else {
           this.onError(error)

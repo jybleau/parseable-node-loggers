@@ -5,17 +5,25 @@ const debug = require('debug')('parseable-winston')
 /**
  * ClientError is an API client error providing the HTTP status code and error type.
  */
-class ClientError extends Error {
-  constructor(status, message) {
+export class ClientError extends Error {
+  status: number | string
+  constructor(status: number | string, message: string) {
     super(message)
     this.status = status
   }
 }
 
 /**
- * Client is the API client.
+ * ParseableClient is the Parseable API client.
  */
-class Client {
+export class ParseableClient {
+  baseurl: string
+  logstream: string
+  username: string
+  password: string
+  disableTLSCerts: boolean | undefined
+  http2: boolean | undefined
+  tags: object | undefined
   /**
    * Initialize.
    */
@@ -39,7 +47,7 @@ class Client {
   /**
    * sendEvents: ingests a batch of events.
    */
-  async sendEvents(events) {
+  async sendEvents(events: any[]) {
     const auth = Buffer.from(`${this.username}:${this.password}`, 'binary').toString('base64')
     // additional optional header: X-P-META-[custom metadata name]
     const headers = {
@@ -79,5 +87,3 @@ class Client {
     }
   }
 }
-
-exports.Client = Client;
