@@ -1,4 +1,4 @@
-const ParseableTransport = require('../dist').default
+const { ParseableTransport } = require('../dist')
 const winston = require('winston')
 
 const parseable = new ParseableTransport({
@@ -20,4 +20,4 @@ logger.info('User took the goggles', { userid: 1, user: { name: 'Rainier Wolfcas
 logger.warning('The goggles do nothing', { userid: 1 })
 logger.error('Something crashed', { error: new Error('boom') })
 
-logger.end()
+logger.close()

@@ -1,6 +1,7 @@
 
-const debug = require('debug')('parseable-winston')
-const { setTimeoutPromise } = require('timers/promises')
+import Debug from 'debug'
+const debug = Debug('parseable-winston')
+import { setTimeout as setTimeoutPromise } from 'timers/promises'
 
 // error codes for which we can retry
 const errorCodesToRetry = ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE']
@@ -10,12 +11,12 @@ const errorCodesToRetry = ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRE
  */
 
 export class BufferIngester {
-  values: any[]
+  values: object[]
   maxEntries: number
   maxRetries: number
   private _id: NodeJS.Timeout
-  onFlush: any
-  onError: any
+  onFlush: (value: object[]) => void
+  onError: (error: Error) => void
   
   constructor({ onFlush, onError, maxEntries = 250, maxRetries = 3, flushInterval = 5000 }) {
     this.values = []

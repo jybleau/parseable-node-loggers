@@ -1,6 +1,7 @@
-const { join } = require('node:path')
-const superagent = require('superagent')
-const debug = require('debug')('parseable-winston')
+import { join } from 'node:path'
+import superagent from 'superagent'
+import Debug from 'debug'
+const debug = Debug('parseable-winston')
 
 /**
  * ClientError is an API client error providing the HTTP status code and error type.
@@ -47,7 +48,7 @@ export class ParseableClient {
   /**
    * sendEvents: ingests a batch of events.
    */
-  async sendEvents(events: any[]) {
+  async sendEvents(events: object[]) {
     const auth = Buffer.from(`${this.username}:${this.password}`, 'binary').toString('base64')
     // additional optional header: X-P-META-[custom metadata name]
     const headers = {

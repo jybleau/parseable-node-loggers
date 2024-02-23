@@ -1,8 +1,9 @@
 
-const debug = require('debug')('parseable-winston')
-const Transport = require('winston-transport')
-const { ParseableClient } = require('./lib/ParseableClient')
-const { BufferIngester } = require('./lib/BufferIngester')
+import Debug from 'debug'
+const debug = Debug('parseable-winston')
+import Transport from 'winston-transport'
+import { ParseableClient } from './lib/ParseableClient'
+import { BufferIngester } from './lib/BufferIngester'
 
 // levels is a map of valid Winston to Parseable Logs levels.
 const levels = {
@@ -23,6 +24,9 @@ const levels = {
  */
 
 export class ParseableTransport extends Transport {
+  afterClose: () => void | undefined
+  client: ParseableClient
+  buffer: BufferIngester
 
   /**
    * Initialize with the given config:
@@ -40,7 +44,11 @@ export class ParseableTransport extends Transport {
    */
 
   constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, ...options }) {
-    super(options)
+    super(options);
+    if (options.close) {
+      this.afterClose = options.close;
+    }
+    this.close = this.onClose;
     this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2 })
     this.buffer = new BufferIngester({
       onFlush: this.onFlush.bind(this),
@@ -53,7 +61,7 @@ export class ParseableTransport extends Transport {
    * Log handler, buffer the event.
    */
 
-  async log(info, callback) {
+  async log(info: { level: number | string, message: string | undefined, error: Error | string | undefined }, callback: () => void) {
     const { level, message, ...fields } = info
     
     // normalize level
@@ -79,20 +87,22 @@ export class ParseableTransport extends Transport {
   }
 
   /**
-   * End handler, close the buffer.
+   * Handle closing the buffer.
    */
 
-  async end(args: any): Promise<this> {
+  onClose(): void {
     debug('closing')
-    await this.buffer.close()
-    return super.end(args)
+    this.buffer.close() // no await since TransportStream.close is not expected to be async
+    if (this.afterClose) {
+      this.afterClose()
+    }
   }
 
   /**
    * Handle flushing.
    */
 
-  async onFlush(events: any[]) {
+  async onFlush(events: object[]): Promise<void> {
     await this.client.sendEvents(events)
   }
 
@@ -100,7 +110,7 @@ export class ParseableTransport extends Transport {
    * Handle errors.
    */
 
-  async onError(error: Error) {
+  onError(error: Error | string): void {
     // TODO: maybe delegate here
     console.error('parseable-winston: error flushing logs: %s', error)
   }
