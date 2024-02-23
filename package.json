@@ -4,6 +4,7 @@
   "license": "MIT",
   "main": "dist/index",
   "scripts": {
+    "lint": "eslint ./src --ext .ts",
     "build": "tsc --build --clean && tsc"
   },
   "repository": {
@@ -30,6 +31,10 @@
   "devDependencies": {
     "@types/node": "^20.11.20",
     "@types/winston": "^2.4.4",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
     "winston": "^3.11.0"
   },
   "dependencies": {
