@@ -63,7 +63,7 @@ const parseable = new ParseableTransport({
 * `disableTLSCerts`: Default to false. Set to true to ignore invalid certificate
 * `http2`: Default to true. Set to false to use HTTP/1.1 instead of HTTP/2.0
 
-## Notes
+## Credits
 
 *Inspired from TJ's Apex-Logs-Winston*
 
