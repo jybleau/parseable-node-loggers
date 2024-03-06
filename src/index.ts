@@ -2,7 +2,7 @@
 import Debug from 'debug'
 const debug = Debug('parseable-winston')
 import Transport from 'winston-transport'
-import { ParseableClient } from './lib/ParseableClient'
+import { ParseableClient } from 'parseable-client'
 import { BufferIngester } from './lib/BufferIngester'
 
 // levels is a map of valid Winston to Parseable Logs levels.
@@ -49,7 +49,7 @@ export class ParseableTransport extends Transport {
       this.afterClose = options.close;
     }
     this.close = this.onClose;
-    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2 })
+    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2, debug })
     this.buffer = new BufferIngester({
       onFlush: this.onFlush.bind(this),
       onError: this.onError.bind(this),
