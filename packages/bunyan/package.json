@@ -1,0 +1,57 @@
+{
+  "name": "parseable-bunyan",
+  "version": "0.0.0",
+  "description": "Parseable Bunyan raw stream",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint ./src --ext .ts",
+    "build:cjs": "tsc --build --clean && tsc",
+    "build:es6": "tsc --build --clean && tsc -p tsconfig.es6.json",
+    "build": "run-p build:*",
+    "prepublishOnly": "npm run build"
+  },
+  "main": "dist/cjs/packages/bunyan/src/index.js",
+  "module": "dist/es6/packages/bunyan/src/index.js",
+  "types": "dist/es6/packages/bunyan/src/index.d.ts",
+  "homepage": "https://github.com/jybleau/parseable-node-logger/tree/master/packages/bunyan#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jybleau/parseable-node-logger"
+  },
+  "author": {
+    "name": "Jacques-Yves Bleau",
+    "email": "jybleau@panache.media",
+    "url": "https://panache.media"
+  },
+  "keywords": [
+    "parseable",
+    "log",
+    "logs",
+    "logging",
+    "bunyan",
+    "stream"
+  ],
+  "files": [
+    "dist/**/*",
+    "tsconfig.json",
+    "tsconfig.es6.json"
+  ],
+  "devDependencies": {
+    "@types/bunyan": "^1.8.11",
+    "@types/debug": "^4.1.12",
+    "@types/node": "^20.11.20",
+    "@types/superagent": "^8.1.4",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.3.3",
+    "bunyan": "^1.8.15"
+  },
+  "dependencies": {
+    "debug": "^4.1.1"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}
