@@ -36,6 +36,7 @@
     "tsconfig.json"
   ],
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "@types/node": "^20.11.20",
     "@types/superagent": "^8.1.4",
     "@types/winston": "^2.4.4",
