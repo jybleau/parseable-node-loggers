@@ -33,7 +33,8 @@
   ],
   "files": [
     "dist/**/*",
-    "tsconfig.json"
+    "tsconfig.json",
+    "tsconfig.es6.json"
   ],
   "devDependencies": {
     "@types/debug": "^4.1.12",
