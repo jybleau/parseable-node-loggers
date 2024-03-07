@@ -1,22 +1,22 @@
 
 
-# Parseable-Winston
+# Parseable-Bunyan
 
-Parseable transport plugin for the popular Winston logging framework.
+Parseable buffered stream plugin for the popular Node-Bunyan logging framework.
 
 ## Dependencies
 
 * [Parseable](https://www.parseable.io/)
-* [Winston](https://github.com/winstonjs/winston)
+* [Bunyan](https://github.com/trentm/node-bunyan)
 
 ## Installation
 
 ```
-npm install parseable-winston
+npm install parseable-bunyan
 ```
 
 ```
-yarn add parseable-winston
+yarn add parseable-bunyan
 ```
 
 ## Usage
@@ -26,15 +26,14 @@ Package is `cjs` and `es6` compatible.
 Logs are buffered in memory and flushed periodically for more efficient ingestion. By default a `maxEntries` of 250, and `flushInterval` of 5 seconds are used.
 
 ```js
-// Using cjs
-const { ParseableTransport } = require('parseable-winston')
-const winston = require('winston')
+const { ParseableStream } = require('parseable-bunyan')
+const bunyan = require('bunyan')
 
 const parseable = new ParseableTransport({
-  url: process.env.PARSEABLE_LOGS_URL, // Ex: 'https://parsable.myserver.local/api/v1/logstream'
-  username: process.env.PARSEABLE_LOGS_USERNAME,
-  password: process.env.PARSEABLE_LOGS_PASSWORD,
-  logstream: process.env.PARSEABLE_LOGS_LOGSTREAM, // The logstream name
+  url: process.env.PARSEABLE_URL, // Ex: 'https://parsable.myserver.local/api/v1/logstream'
+  username: process.env.PARSEABLE_USERNAME,
+  password: process.env.PARSEABLE_PASSWORD,
+  logstream: process.env.PARSEABLE_LOGSTREAM, // The logstream name
   tags: { tag1: 'tagValue' } // optional tags to be added with each ingestion
 })
 
@@ -65,10 +64,6 @@ const parseable = new ParseableTransport({
 
 * `disableTLSCerts`: Default to false. Set to true to ignore invalid certificate
 * `http2`: Default to true. Set to false to use HTTP/1.1 instead of HTTP/2.0
-
-## Credits
-
-*Inspired from TJ's Apex-Logs-Winston*
 
 ## LICENCE
 
