@@ -19,7 +19,7 @@ type RecordObject = {
  * OnRecord event to modify the record or to cancel the buffering. To proceed, return true; to cancel, return false.
  */
 type RecordEvent = (record: RecordObject) => Boolean
-type ParseableStreamOptions = {
+type ParseableBunyanOptions = {
   url: string,
   username: string,
   password: string,
@@ -43,9 +43,9 @@ const levelNameMap = {
 }
 
 /**
- * ParseableStream is the Parseable log stream.
+ * ParseableBunyan is the Parseable log stream for Bunyan
  */
-export class ParseableStream {
+export class ParseableBunyan {
   onErrorOverride: (error: Error | string) => void | undefined
   onRecord: RecordEvent
   client: ParseableClient
@@ -67,7 +67,7 @@ export class ParseableStream {
    * - `onError`: Optional Function so you can process errors. Default: logs the error to the console.
    * - `onRecord`: Optional Function. Can be used to modify the record before buffering or cancel the buffering event by returning false.
    */
-  constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, onError, onRecord }: ParseableStreamOptions) {
+  constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, onError, onRecord }: ParseableBunyanOptions) {
     // on error event
     if (onError) {
       this.onErrorOverride = onError
