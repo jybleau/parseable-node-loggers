@@ -1,7 +1,17 @@
 import { join } from 'node:path'
 import superagent from 'superagent'
-import Debug from 'debug'
-const debug = Debug('parseable-winston')
+
+type ParseableClientOptionsType = { 
+  url: string,
+  logstream: string,
+  username: string,
+  password: string,
+  tags?: Object, 
+  disableTLSCerts?: boolean, 
+  http2?: boolean,
+  errorCodesToIgnoreOnDebug?: string[],
+  debug?: (...args : any[]) => any, 
+}
 
 /**
  * ClientError is an API client error providing the HTTP status code and error type.
@@ -22,20 +32,24 @@ export class ParseableClient {
   logstream: string
   username: string
   password: string
-  disableTLSCerts: boolean | undefined
-  http2: boolean | undefined
-  tags: object | undefined
+  tags: Object
+  disableTLSCerts: boolean
+  http2: boolean
+  errorCodesToIgnoreOnDebug: string[]
+  debug: (...args : any[]) => any
   /**
    * Initialize.
    */
-  constructor(params) {
-    this.baseurl = params.url
-    this.logstream = params.logstream
-    this.username = params.username
-    this.password = params.password
-    this.disableTLSCerts = params.disableTLSCerts
-    this.http2 = params.http2
-    this.tags = params.tags
+  constructor({ url, logstream, username, password, tags = {}, disableTLSCerts = false, http2 = true, errorCodesToIgnoreOnDebug = [], debug = () => {}}: ParseableClientOptionsType) {
+    this.baseurl = url
+    this.logstream = logstream
+    this.username = username
+    this.password = password
+    this.tags = tags
+    this.disableTLSCerts = disableTLSCerts
+    this.errorCodesToIgnoreOnDebug = errorCodesToIgnoreOnDebug
+    this.http2 = http2
+    this.debug = debug
   }
 
   get url() {
@@ -60,11 +74,11 @@ export class ParseableClient {
       headers[`X-P-TAG-${key}`] = this.tags[key]
     }
 
-    const body = JSON.stringify(events)
+    const data: string = JSON.stringify(events)
 
     try {
       const url = this.url
-      const request = superagent.post(url, body)
+      const request = superagent.post(url, data)
       if (this.disableTLSCerts) request.disableTLSCerts()
       if (this.http2) request.http2()
       request.set(headers) 
@@ -80,9 +94,9 @@ export class ParseableClient {
         error.code = error.cause.code
       }
       // When debug is used, output the body when error is different than connection errors.
-      if (!(['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'EPIPE', 'ECONNREFUSED'].includes(error.code))) {
+      if (!(this.errorCodesToIgnoreOnDebug.includes(error.code))) {
         // error probably caused by body format
-        debug(body)
+        this.debug(data)
       }
       throw error
     }

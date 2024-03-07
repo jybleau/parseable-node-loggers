@@ -2,8 +2,15 @@
 import Debug from 'debug'
 const debug = Debug('parseable-winston')
 import Transport from 'winston-transport'
-import { ParseableClient } from './lib/ParseableClient'
-import { BufferIngester } from './lib/BufferIngester'
+import { ParseableClient } from '../../../src/common/ParseableClient'
+import { BufferIngester } from '../../../src/common/BufferIngester'
+
+type LogInfoType = {
+  level: number | string,
+  message: string | undefined
+} & {
+  [key: string]: any
+}
 
 // levels is a map of valid Winston to Parseable Logs levels.
 const levels = {
@@ -25,6 +32,7 @@ const levels = {
 
 export class ParseableTransport extends Transport {
   afterClose: () => void | undefined
+  onErrorOverride: (error: Error | string) => void | undefined
   client: ParseableClient
   buffer: BufferIngester
 
@@ -38,30 +46,37 @@ export class ParseableTransport extends Transport {
    * - `buffer`: Options for buffering
    *   - `maxEntries`: The maximum number of entries before flushing (defaults to 250)
    *   - `flushInterval`: The flush interval in milliseconds (defaults to 5,000)
+   *   - `errorCodesToRetry` Optional. Array or error string code. The buffer ingester will retry when encountering those errors. Default to: ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE']
    * - `tags`: Optional key:value tag object, applied as http header to all log events
    * - `disableTLSCerts`: Optional Boolean, default to false. Set to true to ignore invalid certificate
    * - `http2`: Optional Boolean. Default to true. Use http2 protocol
+   * - `onError`: Optional function to override default onError handler.
    */
 
   constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, ...options }) {
-    super(options);
+    super(options)
+    // after close event
     if (options.close) {
-      this.afterClose = options.close;
+      this.afterClose = options.close
     }
-    this.close = this.onClose;
-    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2 })
+    // on error event
+    if (options.onError) {
+      this.onErrorOverride = options.onError
+    }
+
     this.buffer = new BufferIngester({
       onFlush: this.onFlush.bind(this),
       onError: this.onError.bind(this),
+      debug,
       ...buffer
     })
+    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2, errorCodesToIgnoreOnDebug: this.buffer.errorCodesToRetry, debug })
   }
 
   /**
    * Log handler, buffer the event.
    */
-
-  async log(info: { level: number | string, message: string | undefined, error: Error | string | undefined }, callback: () => void) {
+  async log(info: LogInfoType, callback: () => void) {
     const { level, message, ...fields } = info
     
     // normalize level
@@ -87,9 +102,15 @@ export class ParseableTransport extends Transport {
   }
 
   /**
+   * Calls onClose().
+   */
+  close() {
+    this.onClose()
+  }
+
+  /**
    * Handle closing the buffer.
    */
-
   onClose(): void {
     debug('closing')
     this.buffer.close() // no await since TransportStream.close is not expected to be async
@@ -101,17 +122,18 @@ export class ParseableTransport extends Transport {
   /**
    * Handle flushing.
    */
-
   async onFlush(events: object[]): Promise<void> {
     await this.client.sendEvents(events)
   }
 
   /**
-   * Handle errors.
+   * Error handler. Write error to console if no onError override option was given to constructor.
    */
-
   onError(error: Error | string): void {
-    // TODO: maybe delegate here
-    console.error('parseable-winston: error flushing logs: %s', error)
+    if (this.onErrorOverride) {
+      this.onErrorOverride(error)
+    } else {
+      console.error('parseable-winston: error flushing logs: %s', error.toString(), error)
+    }
   }
 }

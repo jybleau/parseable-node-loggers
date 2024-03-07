@@ -1,29 +1,38 @@
 
-import Debug from 'debug'
-const debug = Debug('parseable-winston')
 import { setTimeout as setTimeoutPromise } from 'timers/promises'
 
-// error codes for which we can retry
-const errorCodesToRetry = ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE']
+type BufferIngesterOptionsType = { 
+  onFlush: (value: object[]) => Promise<void>,
+  onError: (error: Error) => void,
+  maxEntries?: number,
+  maxRetries?: number
+  flushInterval?: number, 
+  errorCodesToRetry?: string[],
+  debug?: (...args: any[]) => any, 
+}
 
 /**
  * Buffer is used to batch events for efficient ingestion.
  */
-
 export class BufferIngester {
   values: object[]
   maxEntries: number
   maxRetries: number
+  flushInterval: number
+  errorCodesToRetry: string[]
   private _id: NodeJS.Timeout
-  onFlush: (value: object[]) => void
+  onFlush: (value: object[]) => Promise<void>
   onError: (error: Error) => void
+  debug: (...args : any[]) => any
   
-  constructor({ onFlush, onError, maxEntries = 250, maxRetries = 3, flushInterval = 5000 }) {
+  constructor({ onFlush, onError, maxEntries = 250, maxRetries = 3, flushInterval = 5000, errorCodesToRetry = ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE'], debug = () => {}}: BufferIngesterOptionsType) {
     this.values = []
     this.maxEntries = maxEntries
     this.maxRetries = maxRetries
     this.onFlush = onFlush
     this.onError = onError
+    this.errorCodesToRetry = errorCodesToRetry
+    this.debug = debug
     this._id = setInterval(this.flush.bind(this), flushInterval)
   }
 
@@ -35,20 +44,20 @@ export class BufferIngester {
   }
 
   async flush() {
-    const values = this.values
+    const values: object[] = this.values
 
     if (!values.length) {
       return
     }
 
     const doFlushAttempt = async (attempt = 1) => {
-      debug(`flushing %d entries${attempt > 1 ? ` attempt ${attempt}` : ''}`, values.length)
+      this.debug(`flushing %d entries${attempt > 1 ? ` attempt ${attempt}` : ''}`, values.length)
 
       try {
         this.values = []
         await this.onFlush(values)
       } catch (error) {
-        if (errorCodesToRetry.includes(error.code) && attempt < this.maxRetries) {
+        if (this.errorCodesToRetry.includes(error.code) && attempt < this.maxRetries) {
           // do retry
           await setTimeoutPromise(250)
           await doFlushAttempt(attempt + 1)
