@@ -17,8 +17,9 @@ type ParseableClientOptionsType = {
  * ClientError is an API client error providing the HTTP status code and error type.
  */
 export class ClientError extends Error {
-  status: number | string
-  constructor(status: number | string, message: string) {
+  status: number
+  response?: Response 
+  constructor(status: number, message: string) {
     super(message)
     this.status = status
   }
@@ -35,19 +36,17 @@ export class ParseableClient {
   tags: Object
   disableTLSCerts: boolean
   http2: boolean
-  errorCodesToIgnoreOnDebug: string[]
   debug: (...args : any[]) => any
   /**
    * Initialize.
    */
-  constructor({ url, logstream, username, password, tags = {}, disableTLSCerts = false, http2 = true, errorCodesToIgnoreOnDebug = [], debug = () => {}}: ParseableClientOptionsType) {
+  constructor({ url, logstream, username, password, tags = {}, disableTLSCerts = false, http2 = true, debug = () => {}}: ParseableClientOptionsType) {
     this.baseurl = url
     this.logstream = logstream
     this.username = username
     this.password = password
     this.tags = tags
     this.disableTLSCerts = disableTLSCerts
-    this.errorCodesToIgnoreOnDebug = errorCodesToIgnoreOnDebug
     this.http2 = http2
     this.debug = debug
   }
@@ -74,28 +73,29 @@ export class ParseableClient {
       headers[`X-P-TAG-${key}`] = this.tags[key]
     }
 
-    const data: string = JSON.stringify(events)
+    let data: string = JSON.stringify(events)
 
     try {
       const url = this.url
-      const request = superagent.post(url, data)
+      const request = superagent.post(url)
       if (this.disableTLSCerts) request.disableTLSCerts()
       if (this.http2) request.http2()
-      request.set(headers) 
-      const response = await request
-      
-      if (!response.ok) {
-        const responseText = await response.text()
-        throw new ClientError(response.status, responseText || response.statusText)
-      }
+      request.set(headers)
+      request.write(data)
+      await request
     } catch (error) {
+      // A cause may have been given 
       if (error.cause) {
-        error.message += ' - ' + error.cause.message
+        error.message += ` - ${error.cause.message}`
         error.code = error.cause.code
       }
+      // Parseable returned a response text
+      if (error.response && error.response.text) {
+        error.message += ` - ${error.response.text}`
+      }
       // When debug is used, output the body when error is different than connection errors.
-      if (!(this.errorCodesToIgnoreOnDebug.includes(error.code))) {
-        // error probably caused by body format
+      if (error.status === 400) { // bad request. Body malformed.
+        // error could have been caused by body format
         this.debug(data)
       }
       throw error

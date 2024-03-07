@@ -70,7 +70,7 @@ export class ParseableTransport extends Transport {
       debug,
       ...buffer
     })
-    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2, errorCodesToIgnoreOnDebug: this.buffer.errorCodesToRetry, debug })
+    this.client = new ParseableClient({ url, logstream, username, password, tags, disableTLSCerts, http2, debug })
   }
 
   /**
@@ -129,11 +129,11 @@ export class ParseableTransport extends Transport {
   /**
    * Error handler. Write error to console if no onError override option was given to constructor.
    */
-  onError(error: Error | string): void {
+  onError(error: Error): void {
     if (this.onErrorOverride) {
       this.onErrorOverride(error)
     } else {
-      console.error('parseable-winston: error flushing logs: %s', error.toString(), error)
+      console.error(`parseable-winston: error flushing logs: ${error.toString()}`)
     }
   }
 }
