@@ -43,5 +43,6 @@
   },
   "dependencies": {
     "superagent": "^8.1.2"
-  }
+  },
+  "version": "0.0.0"
 }
