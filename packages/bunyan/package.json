@@ -1,6 +1,6 @@
 {
   "name": "parseable-bunyan",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Parseable Bunyan raw stream",
   "license": "MIT",
   "scripts": {
