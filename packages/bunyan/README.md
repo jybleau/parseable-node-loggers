@@ -43,7 +43,7 @@ const parseableStream = new ParseableBunyan({
     // Examples of what could be done here: exclude routes, methods, IPs and UAs
     const excludeMethods = 'HEAD,OPTIONS'
     const excludeRoutes = '/check'
-    const EXCLUDEIPS = '192.168.1.1,192.168.1.2'
+    const excludeIPs = '192.168.1.1,192.168.1.2'
     const excludeUAs = 'UptimeRobot,AnnoyingUA'
 
     if (record.req) {
