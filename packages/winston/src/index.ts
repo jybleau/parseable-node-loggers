@@ -13,7 +13,7 @@ type LogInfoType = {
 }
 
 // levels is a map of valid Winston to Parseable Logs levels.
-const levels = {
+const levels: { [key: string]: string } = {
   warn: 'warning',
   verbose: 'debug',
   silly: 'debug',
@@ -48,21 +48,17 @@ export class ParseableTransport extends Transport {
    *   - `flushInterval`: The flush interval in milliseconds (defaults to 5,000)
    *   - `errorCodesToRetry` Optional. Array or error string code. The buffer ingester will retry when encountering those errors. Default to: ['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE']
    * - `tags`: Optional key:value tag object, applied as http header to all log events
-   * - `disableTLSCerts`: Optional Boolean, default to false. Set to true to ignore invalid certificate
-   * - `http2`: Optional Boolean. Default to true. Use http2 protocol
+   * - `disableTLSCerts`: Optional boolean, default to false. Set to true to ignore invalid certificate
+   * - `http2`: Optional boolean. Default to true. Use http2 protocol
    * - `onError`: Optional function to override default onError handler.
    */
 
-  constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, ...options }) {
+  constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, ...options }: { url: string, username: string, password: string, logstream: string, buffer?: any, tags?: any, disableTLSCerts?: boolean, http2?: boolean, [key: string]: any }) {
     super(options)
     // after close event
-    if (options.close) {
-      this.afterClose = options.close
-    }
+    this.afterClose = options.close ?? undefined
     // on error event
-    if (options.onError) {
-      this.onErrorOverride = options.onError
-    }
+    this.onErrorOverride = options.onError ?? undefined
 
     this.buffer = new BufferIngester({
       onFlush: this.onFlush.bind(this),
@@ -80,7 +76,7 @@ export class ParseableTransport extends Transport {
     const { level, message, ...fields } = info
     
     // normalize level
-    const l = levels[level] || level
+    const l: string = (levels[level] || level).toString()
 
     // error details
     if (fields.error instanceof Error) {

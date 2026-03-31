@@ -18,7 +18,7 @@ type RecordObject = {
 /**
  * OnRecord event to modify the record or to cancel the buffering. To proceed, return true; to cancel, return false.
  */
-type RecordEvent = (record: RecordObject) => Boolean
+type RecordEvent = (record: RecordObject) => boolean
 type ParseableBunyanOptions = {
   url: string,
   username: string,
@@ -28,12 +28,12 @@ type ParseableBunyanOptions = {
   tags?: Object,
   disableTLSCerts?: boolean,
   http2?: boolean,
-  onError?: (error: Error | String) => void,
-  onRecord?: RecordEvent
+  onError?: ((error: Error | string) => void) | undefined,
+  onRecord?: RecordEvent | undefined
 }
 
 // levels is a map of valid Winston to Parseable Logs levels.
-const levelNameMap = {
+const levelNameMap: { [key: number]: string } = {
   10: 'trace',
   20: 'debug',
   30: 'info',
@@ -46,8 +46,8 @@ const levelNameMap = {
  * ParseableBunyan is the Parseable log stream for Bunyan
  */
 export class ParseableBunyan {
-  onErrorOverride: (error: Error | string) => void | undefined
-  onRecord: RecordEvent
+  onErrorOverride: ((error: Error | string) => void) | undefined
+  onRecord: RecordEvent | undefined
   client: ParseableClient
   buffer: BufferIngester
 
@@ -62,18 +62,17 @@ export class ParseableBunyan {
    *   - `maxEntries`: The maximum number of entries before flushing (defaults to 250)
    *   - `flushInterval`: The flush interval in milliseconds (defaults to 5,000)
    * - `tags`: Optional key:value tag object, applied as http header to all log events
-   * - `disableTLSCerts`: Optional Boolean, default to false. Set to true to ignore invalid certificate
-   * - `http2`: Optional Boolean. Default to true. Use http2 protocol
+   * - `disableTLSCerts`: Optional boolean, default to false. Set to true to ignore invalid certificate
+   * - `http2`: Optional boolean. Default to true. Use http2 protocol
    * - `onError`: Optional Function so you can process errors. Default: logs the error to the console.
    * - `onRecord`: Optional Function. Can be used to modify the record before buffering or cancel the buffering event by returning false.
    */
   constructor({ url, username, password, logstream, buffer = {}, tags = {}, disableTLSCerts = false, http2 = true, onError, onRecord }: ParseableBunyanOptions) {
     // on error event
-    if (onError) {
-      this.onErrorOverride = onError
-    }
+    this.onErrorOverride = onError ?? undefined
+    
     // on record event, can be used to control logging
-    this.onRecord = onRecord
+    this.onRecord = onRecord  ?? undefined
 
     this.buffer = new BufferIngester({
       onFlush: this.onFlush.bind(this),
@@ -89,7 +88,7 @@ export class ParseableBunyan {
    */
   async write(record: RecordObject) {
     try {
-      const proceed: Boolean = this.onRecord ? this.onRecord(record) : true
+      const proceed: boolean = this.onRecord ? this.onRecord(record) : true
       if (proceed === false) {
         return // do not log
       }
@@ -99,7 +98,11 @@ export class ParseableBunyan {
       this.buffer.push(record)
 
     } catch (error) {
-      this.onError(error)
+      if (error instanceof Error) {
+        this.onError(error)
+      } else {
+        this.onError(new Error(`Unknown error: ${error}`))
+      }
     }
   }
 

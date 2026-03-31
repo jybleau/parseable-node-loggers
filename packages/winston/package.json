@@ -37,23 +37,24 @@
     "tsconfig.es6.json"
   ],
   "devDependencies": {
-    "@types/debug": "^4.1.12",
-    "@types/node": "^20.11.20",
-    "@types/superagent": "^8.1.4",
+    "@types/debug": "^4.1.13",
+    "@types/node": "22.19.15",
+    "@types/superagent": "^8.1.9",
     "@types/winston": "^2.4.4",
-    "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "@typescript-eslint/parser": "^7.0.2",
-    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "eslint": "^10.1.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.3.3",
-    "winston": "^3.11.0"
+    "typescript": "^6.0.2",
+    "winston": "^3.19.0"
   },
   "dependencies": {
-    "debug": "^4.1.1",
-    "superagent": "^8.1.2",
-    "winston-transport": "^4.6.0"
+    "debug": "^4.4.3",
+    "superagent": "^10.3.0",
+    "winston-transport": "^4.9.0"
   },
   "engines": {
-    "node": ">=18.17.0"
-  }
+    "node": ">=22.19.0"
+  },
+  "packageManager": "yarn@4.13.0"
 }
