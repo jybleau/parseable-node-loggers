@@ -6,7 +6,7 @@ type ParseableClientOptionsType = {
   logstream: string,
   username: string,
   password: string,
-  tags?: Object, 
+  tags?: Record<string, any>, 
   disableTLSCerts?: boolean, 
   http2?: boolean,
   errorCodesToIgnoreOnDebug?: string[],
@@ -33,7 +33,7 @@ export class ParseableClient {
   logstream: string
   username: string
   password: string
-  tags: Object
+  tags: Record<string, any>
   disableTLSCerts: boolean
   http2: boolean
   debug: (...args : any[]) => any
@@ -64,7 +64,7 @@ export class ParseableClient {
   async sendEvents(events: object[]) {
     const auth = Buffer.from(`${this.username}:${this.password}`, 'binary').toString('base64')
     // additional optional header: X-P-META-[custom metadata name]
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Authorization': `Basic ${auth}`
     }
@@ -83,7 +83,7 @@ export class ParseableClient {
       request.set(headers)
       request.write(data)
       await request
-    } catch (error) {
+    } catch (error: any) {
       // A cause may have been given 
       if (error.cause) {
         error.message += ` - ${error.cause.message}`

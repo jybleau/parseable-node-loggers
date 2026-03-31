@@ -33,10 +33,11 @@ export class BufferIngester {
     this.onError = onError
     this.errorCodesToRetry = errorCodesToRetry
     this.debug = debug
+    this.flushInterval = flushInterval
     this._id = setInterval(this.flush.bind(this), flushInterval)
   }
 
-  push(value) {
+  push(value: object) {
     this.values.push(value)
     if (this.values.length >= this.maxEntries) {
       this.flush()
@@ -56,7 +57,7 @@ export class BufferIngester {
       try {
         this.values = []
         await this.onFlush(values)
-      } catch (error) {
+      } catch (error: any) {
         if (this.errorCodesToRetry.includes(error.code) && attempt < this.maxRetries) {
           // do retry
           await setTimeoutPromise(250)
